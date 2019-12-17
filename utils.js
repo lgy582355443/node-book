@@ -5,10 +5,10 @@ function handleData(data) {
     if (!data.cover.startsWith('http://')) {
         data['cover'] = `${db.resUrl}/img${data.cover}`
     }
-    data['selected'] = false
-    data['private'] = false
-    data['cache'] = false
-    data['haveRead'] = 0
+    data['private'] = false   //是否开启私密阅读
+    data['selected'] = false  //是否被选中
+    data['cache'] = false  //是否离线缓存，当向服务器请求时为false
+    data['haveRead'] = 0  //已阅读时间分钟
     return data
 }
 

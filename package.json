@@ -21,5 +21,6 @@
     "multiparty": "^4.2.1",
     "mysql": "^2.17.1",
     "qs": "^6.9.1"
-  }
+  },
+  "devDependencies": {}
 }

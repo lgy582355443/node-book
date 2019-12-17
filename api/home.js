@@ -228,12 +228,10 @@ homeRouter.get('/homeData', async (req, res) => {
                     }
                 ];
                 const guessYouLike = getList(guessYouLikeID, results).map(item => {
-                    createGuessYouLike(item);
-                    return item
+                    return createGuessYouLike(item);
                 });
                 const recommend = getList(recommendID, results).map(item => {
-                    createRecommend(item);
-                    return item
+                    return createRecommend(item);
                 });
                 const featured = getList(featuredID, results);
                 const random = getList(randomArr(20, length), results);

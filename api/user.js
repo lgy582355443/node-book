@@ -9,13 +9,13 @@ const userRouter = express.Router();
 
 //登录
 userRouter.post('/login', async (req, res) => {
-    console.log(req.body);
     const userName = req.body.userName;
     const password = req.body.password;
     const connect = await db.connect();
     const sql = `select * from user where userName="${userName}"`
     connect.query(sql, (err, result) => {
         if (err) {
+            console.log(err);
             res.json({
                 code: 1,
                 msg: '获取失败'
@@ -27,13 +27,12 @@ userRouter.post('/login', async (req, res) => {
             })
         } else {
             if (result[0].password == password) {
-                console.log(result);
                 let user = result[0];
                 delete user.password;
+                user.loginTime = new Date()
                 res.json({
                     code: 0,
                     data: user,
-                    loginTime: new Date()
                 })
             } else {
                 res.json({
