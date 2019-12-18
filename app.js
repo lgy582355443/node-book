@@ -22,6 +22,8 @@ app.use(bodyParser.urlencoded({
     extended: true
 }));
 
+// app.use(express.static('./public'));
+
 
 app.use('/api/home', homeRouter);
 app.use('/api/detail', detailRouter);

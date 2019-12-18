@@ -1,5 +1,6 @@
 const express = require('express')
 const db = require('../db')
+const host = require('../config')
 const constant = require('../utils')
 
 const homeRouter = express.Router();
@@ -82,149 +83,149 @@ homeRouter.get('/homeData', async (req, res) => {
                 const banner = [
                     {
                         id: 1,
-                        url: db.resUrl + '/banner/banner1.jpg'
+                        url: host.resUrl + '/banner/banner1.jpg'
                     },
                     {
                         id: 2,
-                        url: db.resUrl + '/banner/banner2.jpg'
+                        url: host.resUrl + '/banner/banner2.jpg'
                     },
                     {
                         id: 3,
-                        url: db.resUrl + '/banner/banner3.jpg'
+                        url: host.resUrl + '/banner/banner3.jpg'
                     }
                 ];
                 const categories = [
                     {
                         category: 1,
                         num: 56,
-                        img1: db.resUrl + '/cover/cs/A978-3-319-62533-1_CoverFigure.jpg',
-                        img2: db.resUrl + '/cover/cs/A978-3-319-89366-2_CoverFigure.jpg'
+                        img1: host.resUrl + '/cover/cs/A978-3-319-62533-1_CoverFigure.jpg',
+                        img2: host.resUrl + '/cover/cs/A978-3-319-89366-2_CoverFigure.jpg'
                     },
                     {
                         category: 2,
                         num: 51,
-                        img1: db.resUrl + '/cover/ss/A978-3-319-61291-1_CoverFigure.jpg',
-                        img2: db.resUrl + '/cover/ss/A978-3-319-69299-9_CoverFigure.jpg'
+                        img1: host.resUrl + '/cover/ss/A978-3-319-61291-1_CoverFigure.jpg',
+                        img2: host.resUrl + '/cover/ss/A978-3-319-69299-9_CoverFigure.jpg'
                     },
                     {
                         category: 3,
                         num: 32,
-                        img1: db.resUrl + '/cover/eco/A978-3-319-69772-7_CoverFigure.jpg',
-                        img2: db.resUrl + '/cover/eco/A978-3-319-76222-7_CoverFigure.jpg'
+                        img1: host.resUrl + '/cover/eco/A978-3-319-69772-7_CoverFigure.jpg',
+                        img2: host.resUrl + '/cover/eco/A978-3-319-76222-7_CoverFigure.jpg'
                     },
                     {
                         category: 4,
                         num: 60,
-                        img1: db.resUrl + '/cover/edu/A978-981-13-0194-0_CoverFigure.jpg',
-                        img2: db.resUrl + '/cover/edu/978-3-319-72170-5_CoverFigure.jpg'
+                        img1: host.resUrl + '/cover/edu/A978-981-13-0194-0_CoverFigure.jpg',
+                        img2: host.resUrl + '/cover/edu/978-3-319-72170-5_CoverFigure.jpg'
                     },
                     {
                         category: 5,
                         num: 23,
-                        img1: db.resUrl + '/cover/eng/A978-3-319-39889-1_CoverFigure.jpg',
-                        img2: db.resUrl + '/cover/eng/A978-3-319-00026-8_CoverFigure.jpg'
+                        img1: host.resUrl + '/cover/eng/A978-3-319-39889-1_CoverFigure.jpg',
+                        img2: host.resUrl + '/cover/eng/A978-3-319-00026-8_CoverFigure.jpg'
                     },
                     {
                         category: 6,
                         num: 42,
-                        img1: db.resUrl + '/cover/env/A978-3-319-12039-3_CoverFigure.jpg',
-                        img2: db.resUrl + '/cover/env/A978-4-431-54340-4_CoverFigure.jpg'
+                        img1: host.resUrl + '/cover/env/A978-3-319-12039-3_CoverFigure.jpg',
+                        img2: host.resUrl + '/cover/env/A978-4-431-54340-4_CoverFigure.jpg'
                     },
                     {
                         category: 7,
                         num: 7,
-                        img1: db.resUrl + '/cover/geo/A978-3-319-56091-5_CoverFigure.jpg',
-                        img2: db.resUrl + '/cover/geo/978-3-319-75593-9_CoverFigure.jpg'
+                        img1: host.resUrl + '/cover/geo/A978-3-319-56091-5_CoverFigure.jpg',
+                        img2: host.resUrl + '/cover/geo/978-3-319-75593-9_CoverFigure.jpg'
                     },
                     {
                         category: 8,
                         num: 18,
-                        img1: db.resUrl + '/cover/his/978-3-319-65244-3_CoverFigure.jpg',
-                        img2: db.resUrl + '/cover/his/978-3-319-92964-4_CoverFigure.jpg'
+                        img1: host.resUrl + '/cover/his/978-3-319-65244-3_CoverFigure.jpg',
+                        img2: host.resUrl + '/cover/his/978-3-319-92964-4_CoverFigure.jpg'
                     },
                     {
                         category: 9,
                         num: 13,
-                        img1: db.resUrl + '/cover/law/2015_Book_ProtectingTheRightsOfPeopleWit.jpeg',
-                        img2: db.resUrl + '/cover/law/2016_Book_ReconsideringConstitutionalFor.jpeg'
+                        img1: host.resUrl + '/cover/law/2015_Book_ProtectingTheRightsOfPeopleWit.jpeg',
+                        img2: host.resUrl + '/cover/law/2016_Book_ReconsideringConstitutionalFor.jpeg'
                     },
                     {
                         category: 10,
                         num: 24,
-                        img1: db.resUrl + '/cover/ls/A978-3-319-27288-7_CoverFigure.jpg',
-                        img2: db.resUrl + '/cover/ls/A978-1-4939-3743-1_CoverFigure.jpg'
+                        img1: host.resUrl + '/cover/ls/A978-3-319-27288-7_CoverFigure.jpg',
+                        img2: host.resUrl + '/cover/ls/A978-1-4939-3743-1_CoverFigure.jpg'
                     },
                     {
                         category: 11,
                         num: 6,
-                        img1: db.resUrl + '/cover/lit/2015_humanities.jpg',
-                        img2: db.resUrl + '/cover/lit/A978-3-319-44388-1_CoverFigure_HTML.jpg'
+                        img1: host.resUrl + '/cover/lit/2015_humanities.jpg',
+                        img2: host.resUrl + '/cover/lit/A978-3-319-44388-1_CoverFigure_HTML.jpg'
                     },
                     {
                         category: 12,
                         num: 14,
-                        img1: db.resUrl + '/cover/bio/2016_Book_ATimeForMetabolismAndHormones.jpeg',
-                        img2: db.resUrl + '/cover/bio/2017_Book_SnowSportsTraumaAndSafety.jpeg'
+                        img1: host.resUrl + '/cover/bio/2016_Book_ATimeForMetabolismAndHormones.jpeg',
+                        img2: host.resUrl + '/cover/bio/2017_Book_SnowSportsTraumaAndSafety.jpeg'
                     },
                     {
                         category: 13,
                         num: 16,
-                        img1: db.resUrl + '/cover/bm/2017_Book_FashionFigures.jpeg',
-                        img2: db.resUrl + '/cover/bm/2018_Book_HeterogeneityHighPerformanceCo.jpeg'
+                        img1: host.resUrl + '/cover/bm/2017_Book_FashionFigures.jpeg',
+                        img2: host.resUrl + '/cover/bm/2018_Book_HeterogeneityHighPerformanceCo.jpeg'
                     },
                     {
                         category: 14,
                         num: 16,
-                        img1: db.resUrl + '/cover/es/2017_Book_AdvancingCultureOfLivingWithLa.jpeg',
-                        img2: db.resUrl + '/cover/es/2017_Book_ChinaSGasDevelopmentStrategies.jpeg'
+                        img1: host.resUrl + '/cover/es/2017_Book_AdvancingCultureOfLivingWithLa.jpeg',
+                        img2: host.resUrl + '/cover/es/2017_Book_ChinaSGasDevelopmentStrategies.jpeg'
                     },
                     {
                         category: 15,
                         num: 2,
-                        img1: db.resUrl + '/cover/ms/2018_Book_ProceedingsOfTheScientific-Pra.jpeg',
-                        img2: db.resUrl + '/cover/ms/2018_Book_ProceedingsOfTheScientific-Pra.jpeg'
+                        img1: host.resUrl + '/cover/ms/2018_Book_ProceedingsOfTheScientific-Pra.jpeg',
+                        img2: host.resUrl + '/cover/ms/2018_Book_ProceedingsOfTheScientific-Pra.jpeg'
                     },
                     {
                         category: 16,
                         num: 9,
-                        img1: db.resUrl + '/cover/mat/2016_Book_AdvancesInDiscreteDifferential.jpeg',
-                        img2: db.resUrl + '/cover/mat/2016_Book_ComputingCharacterizationsOfDr.jpeg'
+                        img1: host.resUrl + '/cover/mat/2016_Book_AdvancesInDiscreteDifferential.jpeg',
+                        img2: host.resUrl + '/cover/mat/2016_Book_ComputingCharacterizationsOfDr.jpeg'
                     },
                     {
                         category: 17,
                         num: 20,
-                        img1: db.resUrl + '/cover/map/2013_Book_TheSouthTexasHealthStatusRevie.jpeg',
-                        img2: db.resUrl + '/cover/map/2016_Book_SecondaryAnalysisOfElectronicH.jpeg'
+                        img1: host.resUrl + '/cover/map/2013_Book_TheSouthTexasHealthStatusRevie.jpeg',
+                        img2: host.resUrl + '/cover/map/2016_Book_SecondaryAnalysisOfElectronicH.jpeg'
                     },
                     {
                         category: 18,
                         num: 16,
-                        img1: db.resUrl + '/cover/phi/2015_Book_TheOnlifeManifesto.jpeg',
-                        img2: db.resUrl + '/cover/phi/2017_Book_Anti-VivisectionAndTheProfessi.jpeg'
+                        img1: host.resUrl + '/cover/phi/2015_Book_TheOnlifeManifesto.jpeg',
+                        img2: host.resUrl + '/cover/phi/2017_Book_Anti-VivisectionAndTheProfessi.jpeg'
                     },
                     {
                         category: 19,
                         num: 10,
-                        img1: db.resUrl + '/cover/phy/2016_Book_OpticsInOurTime.jpeg',
-                        img2: db.resUrl + '/cover/phy/2017_Book_InterferometryAndSynthesisInRa.jpeg'
+                        img1: host.resUrl + '/cover/phy/2016_Book_OpticsInOurTime.jpeg',
+                        img2: host.resUrl + '/cover/phy/2017_Book_InterferometryAndSynthesisInRa.jpeg'
                     },
                     {
                         category: 20,
                         num: 26,
-                        img1: db.resUrl + '/cover/psa/2016_Book_EnvironmentalGovernanceInLatin.jpeg',
-                        img2: db.resUrl + '/cover/psa/2017_Book_RisingPowersAndPeacebuilding.jpeg'
+                        img1: host.resUrl + '/cover/psa/2016_Book_EnvironmentalGovernanceInLatin.jpeg',
+                        img2: host.resUrl + '/cover/psa/2017_Book_RisingPowersAndPeacebuilding.jpeg'
                     },
                     {
                         category: 21,
                         num: 3,
-                        img1: db.resUrl + '/cover/psy/2015_Book_PromotingSocialDialogueInEurop.jpeg',
-                        img2: db.resUrl + '/cover/psy/2015_Book_RethinkingInterdisciplinarityA.jpeg'
+                        img1: host.resUrl + '/cover/psy/2015_Book_PromotingSocialDialogueInEurop.jpeg',
+                        img2: host.resUrl + '/cover/psy/2015_Book_RethinkingInterdisciplinarityA.jpeg'
                     },
                     {
                         category: 22,
                         num: 1,
-                        img1: db.resUrl + '/cover/sta/2013_Book_ShipAndOffshoreStructureDesign.jpeg',
-                        img2: db.resUrl + '/cover/sta/2013_Book_ShipAndOffshoreStructureDesign.jpeg'
+                        img1: host.resUrl + '/cover/sta/2013_Book_ShipAndOffshoreStructureDesign.jpeg',
+                        img2: host.resUrl + '/cover/sta/2013_Book_ShipAndOffshoreStructureDesign.jpeg'
                     }
                 ];
                 const guessYouLike = getList(guessYouLikeID, results).map(item => {

@@ -6,7 +6,7 @@ const shelfRouter = express.Router();
 //添加属性
 function handleData(data) {
     if (!data.cover.startsWith('http://')) {
-        data['cover'] = `${db.resUrl}/img${data.cover}`
+        data['cover'] = `${host.resUrl}/img${data.cover}`
     }
     data['selected'] = false
     data['cache'] = false

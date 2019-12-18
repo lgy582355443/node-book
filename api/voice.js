@@ -4,8 +4,8 @@ const md5 = require('js-md5')
 const qs = require('qs')
 const http = require('http')
 const fs = require('fs')
-const mp3FilePath = require('../db').mp3FilePath
-const resUrl = require('../db').resUrl
+const mp3FilePath = require('../config').mp3FilePath
+const resUrl = require('../config').resUrl
 
 const voiceRouter = express.Router();
 

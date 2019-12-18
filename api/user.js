@@ -2,7 +2,9 @@ const express = require('express')
 const db = require('../db')
 const fs = require('fs')
 const path = require('path')
-const formidable = require('formidable');
+const formidable = require('formidable')
+const avatarFilePath = require('../config').avatarFilePath;
+const resUrl = require('../config').resUrl;
 
 const userRouter = express.Router();
 
@@ -138,11 +140,13 @@ userRouter.post('/updata', async (req, res) => {
 
 
 //更换头像
-userRouter.post('/avatar', (req, res) => {
+userRouter.post('/avatar/:userId', async (req, res) => {
+    const userId = req.params.userId;
+    const connect = await db.connect();
     //上传文件只能通过这个插件接收  file是上传文件 fields是其他的
     const form = new formidable.IncomingForm();
-    form.uploadDir = path.join(__dirname, '../images'); //文件保存的临时目录为static文件夹（文件夹不存在会报错，一会接受的file中的path就是这个）
-    form.maxFieldsSize = 1 * 1024 * 1024; //用户头像大小限制为最大2M
+    form.uploadDir = path.join(__dirname, '../upload'); //文件保存的临时目录为static文件夹（文件夹不存在会报错，一会接受的file中的path就是这个）
+    form.maxFieldsSize = 1 * 1024 * 1024; //用户头像大小限制为最大1M
     form.keepExtensions = true; //使用文件的原扩展名  
     form.parse(req, (err, fields, file) => {
         let filePath = '';
@@ -158,7 +162,8 @@ userRouter.post('/avatar', (req, res) => {
             }
         }
         //文件移动的目录文件夹，不存在时创建目标文件夹  
-        let targetDir = path.join(__dirname, '../uploads/images/user/avatar');
+        let targetDir = avatarFilePath;
+        // let targetDir = path.join(__dirname, '../public');
         if (!fs.existsSync(targetDir)) {
             fs.mkdir(targetDir);
         }
@@ -173,22 +178,69 @@ userRouter.post('/avatar', (req, res) => {
             });
         } else {
             //以当前时间戳对上传文件进行重命名  
-            const fileName = new Date().getTime() + fileExt;
+            const fileName = userId + '_' + new Date().getTime() + fileExt;
             const targetFile = path.join(targetDir, fileName);
-            //移动文件 (旧文件名，新文件名，回调函数) 
-            fs.rename(filePath, targetFile, function (err) {
+
+            const queryById = `select * from user where id="${userId}"`
+            const updata = `update user set avatar="${fileName}" where id="${userId}"`
+
+            connect.query(queryById, (err, result) => {
                 if (err) {
-                    console.info(err);
-                    res.json({ code: -1, message: '操作失败' });
-                } else {
-                    //上传成功，返回文件的相对路径  
-                    let fileUrl = targetDir + fileName;
+                    console.log(err);
                     res.json({
-                        fileUrl,
-                        code: 0,
-                    });
+                        code: 1,
+                        msg: '获取失败'
+                    })
+                } else {
+                    if (result.length > 0) {
+                        //旧头像文件名
+                        const oldAvatar = result[0].avatar;
+
+                        //移动文件 (旧文件名，新文件名，回调函数) 
+                        fs.rename(filePath, targetFile, (err) => {
+                            if (err) {
+                                console.info(err);
+                                res.json({ code: 1, msg: '操作失败' });
+                            }
+                        });
+
+                        //上传成功，返回文件的相对路径  
+                        let fileUrl = resUrl + '/user/avatar/' + fileName;
+                        connect.query(updata, (err, result) => {
+                            if (err) {
+                                console.log(err);
+                                res.json({
+                                    code: 1,
+                                    msg: '获取失败'
+                                })
+                            } else {
+                                res.json({
+                                    fileUrl,
+                                    code: 0,
+                                    msg: '更换成功'
+                                });
+                            }
+                        })
+
+                        //删除旧的头像文件
+                        if (oldAvatar && oldAvatar !== 'avatar.png') {
+                            fs.unlink(targetDir + '/' + oldAvatar, (err) => {
+                                if (err) {
+                                    console.info(err);
+                                    res.json({ code: 1, msg: '操作失败' });
+                                }
+                            })
+                        }
+
+                    } else {
+                        res.json({
+                            code: 1,
+                            msg: '获取失败'
+                        })
+                    }
                 }
-            });
+                connect.end()
+            })
         }
     });
 })
