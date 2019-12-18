@@ -1,12 +1,13 @@
 const express = require('express')
 const db = require('../db')
+const resUrl = require('../config').resUrl;
 
 const shelfRouter = express.Router();
 
 //添加属性
 function handleData(data) {
     if (!data.cover.startsWith('http://')) {
-        data['cover'] = `${host.resUrl}/img${data.cover}`
+        data['cover'] = `${resUrl}/img${data.cover}`
     }
     data['selected'] = false
     data['cache'] = false

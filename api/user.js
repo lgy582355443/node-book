@@ -31,11 +31,13 @@ userRouter.post('/login', async (req, res) => {
             if (result[0].password == password) {
                 let user = result[0];
                 delete user.password;
-                user.loginTime = new Date()
-                res.json({
-                    code: 0,
-                    data: user,
-                })
+                user.loginTime = new Date();
+                user.avatar = resUrl + '/user/avatar/' + user.avatar;
+                user.avatar =
+                    res.json({
+                        code: 0,
+                        data: user,
+                    })
             } else {
                 res.json({
                     code: 1,
@@ -118,8 +120,9 @@ userRouter.post('/updata', async (req, res) => {
                             msg: '更改失败'
                         })
                     } else {
-                        newData.loginTime = new Date()
                         delete newData.password
+                        newData.loginTime = new Date();
+                        newData.avatar = resUrl + '/user/avatar/' + user.avatar;
                         res.json({
                             code: 0,
                             data: newData,

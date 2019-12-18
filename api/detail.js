@@ -1,12 +1,13 @@
 const express = require('express')
 const db = require('../db')
 const constant = require('../utils')
+const resUrl = require('../config').resUrl;
 
 const detailRouter = express.Router();
 
 //图书详情
-detailRouter.get('/bookDetail',async (req, res) => {
-    const connect =await db.connect()
+detailRouter.get('/bookDetail', async (req, res) => {
+    const connect = await db.connect()
     const fileName = req.query.fileName;
     const sql = `select * from book where fileName='${fileName}'`
     connect.query(sql, (err, results) => {
