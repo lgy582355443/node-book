@@ -35,7 +35,7 @@ function returnShelf(shelfIdList, bookList) {
 }
 
 //获取书架列表
-shelfRouter.get('/shelfList', async (req, res) => {
+shelfRouter.get('/shelfList', async (req, res, next) => {
     const userId = req.query.userId;
     const connect = await db.connect();
     const queryAll = 'select * from book where cover!=\'\''
@@ -44,20 +44,14 @@ shelfRouter.get('/shelfList', async (req, res) => {
     connect.query(findByUid, (err, result) => {
         if (err) {
             console.log(err);
-            res.json({
-                code: 1,
-                msg: '1获取失败'
-            })
+            return next(err)
         } else {
             if (result.length > 0) {
                 let shelfList = JSON.parse(result[0].shelfList);
                 connect.query(queryAll, (err, result) => {
                     if (err) {
                         console.log(err);
-                        res.json({
-                            code: 1,
-                            msg: '2获取失败'
-                        })
+                        return next(err)
                     } else {
                         if (result.length > 0) {
                             let bookList = result;
@@ -92,7 +86,7 @@ shelfRouter.get('/shelfList', async (req, res) => {
 
 
 //更新书架列表
-shelfRouter.get('/updata', async (req, res) => {
+shelfRouter.get('/updata', async (req, res, next) => {
     // console.log(req.query);
     let shelfData = req.query;
     const connect = await db.connect();
@@ -103,10 +97,7 @@ shelfRouter.get('/updata', async (req, res) => {
     connect.query(findByUid, (err, result) => {
         if (err) {
             console.log(err);
-            res.json({
-                code: 1,
-                msg: '1更新失败'
-            })
+            return next(err)
         } else {
             if (result.length > 0) {
                 connect.query(updata, shelfData, (err, result) => {
@@ -127,10 +118,7 @@ shelfRouter.get('/updata', async (req, res) => {
                 connect.query(insert, shelfData, (err, result) => {
                     if (err) {
                         console.log(err);
-                        res.json({
-                            code: 1,
-                            msg: '3更新失败'
-                        })
+                        return next(err)
                     } else {
                         res.json({
                             code: 0,

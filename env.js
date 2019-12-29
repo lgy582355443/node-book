@@ -1,2 +1,2 @@
-const env = 'pord'
+const env = 'dev'
 module.exports = env

@@ -1,43 +1,48 @@
 const express = require('express')
-const db = require('../db')
 const fs = require('fs')
 const path = require('path')
 const formidable = require('formidable')
+const jwt = require('jsonwebtoken')
+const db = require('../db')
 const avatarFilePath = require('../config').avatarFilePath;
 const resUrl = require('../config').resUrl;
+const setMD5 = require('../utils').setMD5;
+const secretOrPrivateKey = require('../utils').secretOrPrivateKey;
 
 const userRouter = express.Router();
 
 
 //登录
-userRouter.post('/login', async (req, res) => {
+userRouter.post('/login', async (req, res, next) => {
     const userName = req.body.userName;
-    const password = req.body.password;
+    const md5Pwd = setMD5(req.body.password);
     const connect = await db.connect();
     const sql = `select * from user where userName="${userName}"`
     connect.query(sql, (err, result) => {
         if (err) {
             console.log(err);
-            res.json({
-                code: 1,
-                msg: '获取失败'
-            })
+            return next(err)
         } else if (result.length == 0) {
             res.json({
                 code: 1,
                 msg: '用户名或密码错误'
             })
         } else {
-            if (result[0].password == password) {
+            if (result[0].password == md5Pwd) {
                 let user = result[0];
                 delete user.password;
                 user.loginTime = new Date();
                 user.avatar = resUrl + '/user/avatar/' + user.avatar;
-                user.avatar =
-                    res.json({
-                        code: 0,
-                        data: user,
-                    })
+                //生成Token
+                const token = jwt.sign({ userName }, secretOrPrivateKey, {
+                    expiresIn: 60 * 60 * 24 * 7  // 一周过期
+                });
+
+                res.json({
+                    token,
+                    code: 0,
+                    data: user,
+                })
             } else {
                 res.json({
                     code: 1,
@@ -50,24 +55,24 @@ userRouter.post('/login', async (req, res) => {
 })
 
 //注册
-userRouter.post('/register', async (req, res) => {
-    const user = req.body;
-    if (!user.userName || !user.password) {
+userRouter.post('/register', async (req, res, next) => {
+    let user = req.body;
+    if (user.userName == null || !user.password == null || user.userName.trim() == '' || user.password.trim() == '') {
         res.json({
             code: 1,
             msg: '用户名或密码不能为空'
         })
         return
     }
+    //对密码进行加密
+    user.password = setMD5(user.password);
     const connect = await db.connect();
     const queryByName = `select * from user where userName="${user.userName}"`
     const insert = `INSERT INTO user SET ?`
-    connect.query(queryByName, user, (err, result) => {
+    connect.query(queryByName, (err, result) => {
         if (err) {
-            res.json({
-                code: 1,
-                msg: '注册失败'
-            })
+            console.log(err);
+            return next(err)
         } else {
             if (result.length > 0) {
                 res.json({
@@ -78,10 +83,7 @@ userRouter.post('/register', async (req, res) => {
                 connect.query(insert, user, (err, result) => {
                     if (err) {
                         console.log(err);
-                        res.json({
-                            code: 1,
-                            msg: '插入数据失败'
-                        })
+                        return next(err)
                     } else {
                         res.json({
                             code: 0,
@@ -96,18 +98,15 @@ userRouter.post('/register', async (req, res) => {
 })
 
 //更改用户信息
-userRouter.post('/updata', async (req, res) => {
+userRouter.post('/updata', async (req, res, next) => {
     const user = req.body;
     const connect = await db.connect();
     const queryById = `select * from user where id="${user.id}"`
     const updata = `update user set ? where id="${user.id}"`
-    connect.query(queryById, user.id, (err, result) => {
+    connect.query(queryById, (err, result) => {
         if (err) {
             console.log(err);
-            res.json({
-                code: 1,
-                msg: '更改失败'
-            })
+            return next(err)
         } else {
             if (result.length > 0) {
                 let newData = result[0]
@@ -115,10 +114,7 @@ userRouter.post('/updata', async (req, res) => {
                 connect.query(updata, newData, (err, result) => {
                     if (err) {
                         console.log(err);
-                        res.json({
-                            code: 1,
-                            msg: '更改失败'
-                        })
+                        return next(err)
                     } else {
                         delete newData.password
                         newData.loginTime = new Date();
@@ -143,7 +139,7 @@ userRouter.post('/updata', async (req, res) => {
 
 
 //更换头像
-userRouter.post('/avatar/:userId', async (req, res) => {
+userRouter.post('/avatar/:userId', async (req, res, next) => {
     const userId = req.params.userId;
     const connect = await db.connect();
     //上传文件只能通过这个插件接收  file是上传文件 fields是其他的
@@ -179,6 +175,7 @@ userRouter.post('/avatar/:userId', async (req, res) => {
                 code: -1,
                 message: '此文件类型不允许上传'
             });
+            return next(err)
         } else {
             //以当前时间戳对上传文件进行重命名  
             const fileName = userId + '_' + new Date().getTime() + fileExt;
@@ -190,10 +187,7 @@ userRouter.post('/avatar/:userId', async (req, res) => {
             connect.query(queryById, (err, result) => {
                 if (err) {
                     console.log(err);
-                    res.json({
-                        code: 1,
-                        msg: '获取失败'
-                    })
+                    return next(err)
                 } else {
                     if (result.length > 0) {
                         //旧头像文件名
@@ -212,10 +206,7 @@ userRouter.post('/avatar/:userId', async (req, res) => {
                         connect.query(updata, (err, result) => {
                             if (err) {
                                 console.log(err);
-                                res.json({
-                                    code: 1,
-                                    msg: '获取失败'
-                                })
+                                return next(err)
                             } else {
                                 res.json({
                                     fileUrl,
@@ -230,7 +221,7 @@ userRouter.post('/avatar/:userId', async (req, res) => {
                             fs.unlink(targetDir + '/' + oldAvatar, (err) => {
                                 if (err) {
                                     console.info(err);
-                                    res.json({ code: 1, msg: '操作失败' });
+                                    return next(err)
                                 }
                             })
                         }
@@ -248,4 +239,33 @@ userRouter.post('/avatar/:userId', async (req, res) => {
     });
 })
 
+//获取用户信息
+// userRouter.get('/userInfo', (req, res, next) => {
+//     const userId = req.query.id;
+//     const connect = await db.connect();
+//     const queryById = `select * from user where id="${userId}"`
+//     connect.query(queryById, (err, result) => {
+//         if (err) {
+//             console.log(err);
+//             return next(err)
+//         } else {
+//             if (result.length > 0) {
+//                 let user = resUrl[0];
+//                 delete user.password
+//                 user.loginTime = new Date();
+//                 user.avatar = resUrl + '/user/avatar/' + user.avatar;
+//                 res.json({
+//                     code: 0,
+//                     data: user,
+//                     msg: '更改成功'
+//                 })
+//             } else {
+//                 res.json({
+//                     code: 1,
+//                     msg: '没有找到用户'
+//                 })
+//             }
+//         }
+//     })
+// })
 module.exports = userRouter

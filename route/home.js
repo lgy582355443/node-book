@@ -69,15 +69,12 @@ function createRecommend(data) {
     return data;
 }
 
-homeRouter.get('/homeData', async (req, res) => {
+homeRouter.get('/homeData', async (req, res, next) => {
     const connect = await db.connect();
     connect.query('select * from book where cover!=\'\'',
         (err, results) => {
             if (err) {
-                res.json({
-                    code: 1,
-                    msg: '获取失败'
-                })
+                return next(err)
             } else {
                 const length = results.length;
                 const banner = [

@@ -5,15 +5,12 @@ const constant = require('../utils')
 const listRouter = express.Router();
 
 //返回各个种类的书籍
-listRouter.get('/categoryList', async (req, res) => {
+listRouter.get('/categoryList', async (req, res, next) => {
     const connect = await db.connect();
     await connect.query('select * from book where cover!=\'\'',
         (err, results) => {
             if (err) {
-                res.json({
-                    code: 1,
-                    msg: '获取失败'
-                })
+                return next(err)
             } else {
                 results = results.map(item => constant.handleData(item))
                 const data = {}
@@ -32,15 +29,12 @@ listRouter.get('/categoryList', async (req, res) => {
 })
 
 //返回所有书籍
-listRouter.get('/allBookList',async (req, res) => {
+listRouter.get('/allBookList',async (req, res, next) => {
     const connect =await db.connect();
     connect.query('select * from book where cover!=\'\'',
         (err, results) => {
             if (err) {
-                res.json({
-                    code: 1,
-                    msg: '获取失败'
-                })
+                return next(err)
             } else {
                 results = results.map(item => constant.handleData(item))
                 res.json({

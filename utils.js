@@ -1,9 +1,10 @@
-const db = require('./db')
 
+const crypto = require('crypto')
+const resUrl = require('./config').resUrl;
 //添加属性
 function handleData(data) {
     if (!data.cover.startsWith('http://')) {
-        data['cover'] = `${db.resUrl}/img${data.cover}`
+        data['cover'] = `${resUrl}/img${data.cover}`
     }
     data['private'] = false   //是否开启私密阅读
     data['selected'] = false  //是否被选中
@@ -37,7 +38,19 @@ const category = [
     'Statistics'
 ]
 
+//MD5加密的盐
+const salt = 'MD5Salt';
+function setMD5(str) {
+    const content = str + salt;
+    return crypto.createHash('md5').update(content).digest('hex');
+}
+
+//jwt密钥
+const secretOrPrivateKey = 'Ebook';
+
 module.exports = {
     handleData,
-    category
+    category,
+    setMD5,
+    secretOrPrivateKey
 }

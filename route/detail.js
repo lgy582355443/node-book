@@ -6,16 +6,13 @@ const resUrl = require('../config').resUrl;
 const detailRouter = express.Router();
 
 //图书详情
-detailRouter.get('/bookDetail', async (req, res) => {
+detailRouter.get('/bookDetail', async (req, res, next) => {
     const connect = await db.connect()
     const fileName = req.query.fileName;
     const sql = `select * from book where fileName='${fileName}'`
     connect.query(sql, (err, results) => {
         if (err) {
-            res.json({
-                code: 1,
-                msg: '电子书详情获取失败'
-            })
+            return next(err)
         } else {
             if (results && results.length === 0) {
                 res.json({

@@ -1,12 +1,14 @@
 const express = require('express')
 const cors = require('cors')
+const jwt = require('jsonwebtoken')
 const bodyParser = require('body-parser')
-const userRouter = require('./api/user')
-const homeRouter = require('./api/home')
-const listRouter = require('./api/list')
-const detailRouter = require('./api/detail')
-const shelfRouter = require('./api/shelf')
-const voiceRouter = require('./api/voice')
+const userRouter = require('./route/user')
+const homeRouter = require('./route/home')
+const listRouter = require('./route/list')
+const detailRouter = require('./route/detail')
+const shelfRouter = require('./route/shelf')
+const secretOrPrivateKey = require('./utils').secretOrPrivateKey;
+// const voiceRouter = require('./route/voice')
 
 // const multipart = require('connect-multiparty');
 
@@ -14,6 +16,7 @@ const app = express();
 
 app.use(cors());
 
+// app.use(express.static('./public'));
 
 // app.use(bodyParser.json());
 
@@ -22,15 +25,33 @@ app.use(bodyParser.urlencoded({
     extended: true
 }));
 
-// app.use(express.static('./public'));
-
+//验证Token
+const passer = ['/api/home/homeData', '/api/detail//bookDetail', '/api/list/categoryList', '/api/list/allBookList', '/api/user/register', '/api/user/login'];
+function auth(req, res, next) {
+    const authorization = req.get('Authorization');
+    if (passer.includes(req.path)) {
+        next()
+    } else {
+        jwt.verify(authorization, secretOrPrivateKey, function (err, decode) {
+            if (err) {  //  认证出错
+                res.json({
+                    code: -1,
+                    message: '请重新登录'
+                });
+            } else {
+                next();
+            }
+        })
+    }
+}
+app.use(auth);
 
 app.use('/api/home', homeRouter);
 app.use('/api/detail', detailRouter);
 app.use('/api/shelf', shelfRouter);
 app.use('/api/list', listRouter);
 app.use('/api/user', userRouter);
-app.use(voiceRouter);
+// app.use(voiceRouter);
 
 
 function not_find_handler_middleware(err, res, next) {
@@ -47,8 +68,6 @@ function error_handler_middleware(err, req, res, next) {
             .json({
                 message: `${message || '服务器异常'}`
             })
-    } else {
-
     }
 }
 
