@@ -11,7 +11,7 @@ if (env == 'dev') {
 } else if (env == 'prod') {
     dbHost = '120.79.160.241'
     dbUser = 'root'
-    dbPwd = '123456'
+    dbPwd = '数据库密码'
 }
 
 //连接数据库
@@ -20,7 +20,7 @@ function connect() {
         host: dbHost,
         user: dbUser,
         password: dbPwd,
-        database: 'text'
+        database: 'book'
     })
 }
 

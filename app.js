@@ -26,7 +26,7 @@ app.use(bodyParser.urlencoded({
 }));
 
 //验证Token
-const passer = ['/api/home/homeData', '/api/detail//bookDetail', '/api/list/categoryList', '/api/list/allBookList', '/api/user/register', '/api/user/login'];
+const passer = ['/api/home/homeData', '/api/detail/bookDetail', '/api/list/categoryList', '/api/list/allBookList', '/api/user/register', '/api/user/login'];
 function auth(req, res, next) {
     const authorization = req.get('Authorization');
     if (passer.includes(req.path)) {

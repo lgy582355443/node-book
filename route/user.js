@@ -31,7 +31,6 @@ userRouter.post('/login', async (req, res, next) => {
             if (result[0].password == md5Pwd) {
                 let user = result[0];
                 delete user.password;
-                user.loginTime = new Date();
                 user.avatar = resUrl + '/user/avatar/' + user.avatar;
                 //生成Token
                 const token = jwt.sign({ userName }, secretOrPrivateKey, {
@@ -117,7 +116,6 @@ userRouter.post('/updata', async (req, res, next) => {
                         return next(err)
                     } else {
                         delete newData.password
-                        newData.loginTime = new Date();
                         newData.avatar = resUrl + '/user/avatar/' + user.avatar;
                         res.json({
                             code: 0,
@@ -252,7 +250,6 @@ userRouter.post('/avatar/:userId', async (req, res, next) => {
 //             if (result.length > 0) {
 //                 let user = resUrl[0];
 //                 delete user.password
-//                 user.loginTime = new Date();
 //                 user.avatar = resUrl + '/user/avatar/' + user.avatar;
 //                 res.json({
 //                     code: 0,
