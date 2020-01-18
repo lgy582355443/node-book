@@ -162,7 +162,7 @@ userRouter.post('/avatar/:userId', async (req, res, next) => {
         let targetDir = avatarFilePath;
         // let targetDir = path.join(__dirname, '../public');
         if (!fs.existsSync(targetDir)) {
-            fs.mkdir(targetDir);
+            fs. mkdirSync(targetDir);
         }
         //获取文件后缀名
         const fileExt = filePath.substring(filePath.lastIndexOf('.'));
@@ -192,7 +192,7 @@ userRouter.post('/avatar/:userId', async (req, res, next) => {
                         const oldAvatar = result[0].avatar;
 
                         //移动文件 (旧文件名，新文件名，回调函数) 
-                        fs.rename(filePath, targetFile, (err) => {
+                        fs.renameSync(filePath, targetFile, (err) => {
                             if (err) {
                                 console.info(err);
                                 res.json({ code: 1, msg: '操作失败' });
@@ -238,31 +238,31 @@ userRouter.post('/avatar/:userId', async (req, res, next) => {
 })
 
 //获取用户信息
-// userRouter.get('/userInfo', (req, res, next) => {
-//     const userId = req.query.id;
-//     const connect = await db.connect();
-//     const queryById = `select * from user where id="${userId}"`
-//     connect.query(queryById, (err, result) => {
-//         if (err) {
-//             console.log(err);
-//             return next(err)
-//         } else {
-//             if (result.length > 0) {
-//                 let user = resUrl[0];
-//                 delete user.password
-//                 user.avatar = resUrl + '/user/avatar/' + user.avatar;
-//                 res.json({
-//                     code: 0,
-//                     data: user,
-//                     msg: '更改成功'
-//                 })
-//             } else {
-//                 res.json({
-//                     code: 1,
-//                     msg: '没有找到用户'
-//                 })
-//             }
-//         }
-//     })
-// })
+userRouter.get('/userInfo', async(req, res, next) => {
+    const userId = req.query.id;
+    const connect = await db.connect();
+    const queryById = `select * from user where id="${userId}"`
+    connect.query(queryById, (err, result) => {
+        if (err) {
+            console.log(err);
+            return next(err)
+        } else {
+            if (result.length > 0) {
+                let user = result[0];
+                delete user.password
+                user.avatar = resUrl + '/user/avatar/' + user.avatar;
+                res.json({
+                    code: 0,
+                    data: user,
+                    msg: '获取成功'
+                })
+            } else {
+                res.json({
+                    code: 1,
+                    msg: '没有找到用户'
+                })
+            }
+        }
+    })
+})
 module.exports = userRouter

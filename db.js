@@ -11,7 +11,7 @@ if (env == 'dev') {
 } else if (env == 'prod') {
     dbHost = '120.79.160.241'
     dbUser = 'root'
-    dbPwd = '数据库密码'
+    dbPwd = '123456'
 }
 
 //连接数据库
