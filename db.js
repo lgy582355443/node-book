@@ -3,15 +3,17 @@ const mysql = require('mysql')
 
 let dbHost
 let dbUser
-let dbPwd
+let dbName
 if (env == 'dev') {
     dbHost = 'localhost'
     dbUser = 'root'
     dbPwd = 'abc123456'
+    dbName = 'text'
 } else if (env == 'prod') {
-    dbHost = '120.79.160.241'
+    dbHost = '112.74.164.251'
     dbUser = 'root'
-    dbPwd = '123456'
+    dbPwd = 'abc123456'
+    dbName = 'book'
 }
 
 //连接数据库
@@ -20,7 +22,7 @@ function connect() {
         host: dbHost,
         user: dbUser,
         password: dbPwd,
-        database: 'book'
+        database: dbName
     })
 }
 

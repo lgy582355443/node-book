@@ -97,7 +97,7 @@ shelfRouter.get('/updata', async (req, res, next) => {
     connect.query(findByUid, (err, result) => {
         if (err) {
             console.log(err);
-            return next(err)
+            next(err)
         } else {
             if (result.length > 0) {
                 connect.query(updata, shelfData, (err, result) => {

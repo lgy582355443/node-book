@@ -10,7 +10,7 @@ listRouter.get('/categoryList', async (req, res, next) => {
     await connect.query('select * from book where cover!=\'\'',
         (err, results) => {
             if (err) {
-                return next(err)
+                next(err)
             } else {
                 results = results.map(item => constant.handleData(item))
                 const data = {}
@@ -34,7 +34,7 @@ listRouter.get('/allBookList',async (req, res, next) => {
     connect.query('select * from book where cover!=\'\'',
         (err, results) => {
             if (err) {
-                return next(err)
+                next(err)
             } else {
                 results = results.map(item => constant.handleData(item))
                 res.json({

@@ -1,7 +1,6 @@
 const express = require('express')
 const db = require('../db')
 const constant = require('../utils')
-const resUrl = require('../config').resUrl;
 
 const detailRouter = express.Router();
 
@@ -12,7 +11,7 @@ detailRouter.get('/bookDetail', async (req, res, next) => {
     const sql = `select * from book where fileName='${fileName}'`
     connect.query(sql, (err, results) => {
         if (err) {
-            return next(err)
+            next(err)
         } else {
             if (results && results.length === 0) {
                 res.json({

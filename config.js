@@ -10,8 +10,8 @@ if (env == 'dev') {
     mp3FilePath = 'E:/porject/Ebook/resouce/mp3'
     avatarFilePath = 'E:/porject/Ebook/resouce/user/avatar'
 } else if (env == 'prod') {
-    hostname = 'http://120.79.160.241:3000'
-    resUrl = 'http://120.79.160.241'
+    hostname = 'http://112.74.164.251:3000'
+    resUrl = 'http://112.74.164.251'
     mp3FilePath = '/root/nginx/upload/mp3'
     avatarFilePath = '/root/nginx/upload/user/avatar'
 }

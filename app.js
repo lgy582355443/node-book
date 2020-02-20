@@ -27,13 +27,15 @@ app.use(bodyParser.urlencoded({
 
 //验证Token
 const passer = ['/api/home/homeData', '/api/detail/bookDetail', '/api/list/categoryList', '/api/list/allBookList', '/api/user/register', '/api/user/login'];
+
 function auth(req, res, next) {
-    const authorization = req.get('Authorization');
+    let authorization = req.get('Authorization');
+    authorization = authorization.replace('Bearer ', '');
     if (passer.includes(req.path)) {
         next()
     } else {
         jwt.verify(authorization, secretOrPrivateKey, function (err, decode) {
-            if (err) {  //  认证出错
+            if (err) { //  认证出错
                 res.json({
                     code: -1,
                     message: '请重新登录'
@@ -54,7 +56,7 @@ app.use('/api/user', userRouter);
 // app.use(voiceRouter);
 
 
-function not_find_handler_middleware(err, res, next) {
+function not_find_handler_middleware(err, req, res, next) {
     res.status(404)
         .json({
             message: `api不存在`
@@ -63,7 +65,9 @@ function not_find_handler_middleware(err, res, next) {
 
 function error_handler_middleware(err, req, res, next) {
     if (err) {
-        let { message } = err;
+        let {
+            message
+        } = err;
         res.status(500)
             .json({
                 message: `${message || '服务器异常'}`

@@ -21,7 +21,7 @@ userRouter.post('/login', async (req, res, next) => {
     connect.query(sql, (err, result) => {
         if (err) {
             console.log(err);
-            return next(err)
+            next(err)
         } else if (result.length == 0) {
             res.json({
                 code: 1,
@@ -33,8 +33,10 @@ userRouter.post('/login', async (req, res, next) => {
                 delete user.password;
                 user.avatar = resUrl + '/user/avatar/' + user.avatar;
                 //生成Token
-                const token = jwt.sign({ userName }, secretOrPrivateKey, {
-                    expiresIn: 60 * 60 * 24 * 7  // 一周过期
+                const token = jwt.sign({
+                    userName
+                }, secretOrPrivateKey, {
+                    expiresIn: 60 * 60 * 24 * 7 // 一周过期
                 });
 
                 res.json({
@@ -56,7 +58,7 @@ userRouter.post('/login', async (req, res, next) => {
 //注册
 userRouter.post('/register', async (req, res, next) => {
     let user = req.body;
-    if (user.userName == null || !user.password == null || user.userName.trim() == '' || user.password.trim() == '') {
+    if (user.userName == null || user.password == null || user.userName.trim() == '' || user.password.trim() == '') {
         res.json({
             code: 1,
             msg: '用户名或密码不能为空'
@@ -71,7 +73,7 @@ userRouter.post('/register', async (req, res, next) => {
     connect.query(queryByName, (err, result) => {
         if (err) {
             console.log(err);
-            return next(err)
+            next(err)
         } else {
             if (result.length > 0) {
                 res.json({
@@ -82,7 +84,7 @@ userRouter.post('/register', async (req, res, next) => {
                 connect.query(insert, user, (err, result) => {
                     if (err) {
                         console.log(err);
-                        return next(err)
+                        next(err)
                     } else {
                         res.json({
                             code: 0,
@@ -105,7 +107,7 @@ userRouter.post('/updata', async (req, res, next) => {
     connect.query(queryById, (err, result) => {
         if (err) {
             console.log(err);
-            return next(err)
+            next(err)
         } else {
             if (result.length > 0) {
                 let newData = result[0]
@@ -113,7 +115,7 @@ userRouter.post('/updata', async (req, res, next) => {
                 connect.query(updata, newData, (err, result) => {
                     if (err) {
                         console.log(err);
-                        return next(err)
+                        next(err)
                     } else {
                         delete newData.password
                         newData.avatar = resUrl + '/user/avatar/' + user.avatar;
@@ -162,7 +164,7 @@ userRouter.post('/avatar/:userId', async (req, res, next) => {
         let targetDir = avatarFilePath;
         // let targetDir = path.join(__dirname, '../public');
         if (!fs.existsSync(targetDir)) {
-            fs. mkdirSync(targetDir);
+            fs.mkdirSync(targetDir);
         }
         //获取文件后缀名
         const fileExt = filePath.substring(filePath.lastIndexOf('.'));
@@ -173,7 +175,7 @@ userRouter.post('/avatar/:userId', async (req, res, next) => {
                 code: -1,
                 message: '此文件类型不允许上传'
             });
-            return next(err)
+            next(err)
         } else {
             //以当前时间戳对上传文件进行重命名  
             const fileName = userId + '_' + new Date().getTime() + fileExt;
@@ -185,7 +187,7 @@ userRouter.post('/avatar/:userId', async (req, res, next) => {
             connect.query(queryById, (err, result) => {
                 if (err) {
                     console.log(err);
-                    return next(err)
+                    next(err)
                 } else {
                     if (result.length > 0) {
                         //旧头像文件名
@@ -195,7 +197,10 @@ userRouter.post('/avatar/:userId', async (req, res, next) => {
                         fs.renameSync(filePath, targetFile, (err) => {
                             if (err) {
                                 console.info(err);
-                                res.json({ code: 1, msg: '操作失败' });
+                                res.json({
+                                    code: 1,
+                                    msg: '操作失败'
+                                });
                             }
                         });
 
@@ -204,7 +209,7 @@ userRouter.post('/avatar/:userId', async (req, res, next) => {
                         connect.query(updata, (err, result) => {
                             if (err) {
                                 console.log(err);
-                                return next(err)
+                                next(err)
                             } else {
                                 res.json({
                                     fileUrl,
@@ -219,7 +224,7 @@ userRouter.post('/avatar/:userId', async (req, res, next) => {
                             fs.unlink(targetDir + '/' + oldAvatar, (err) => {
                                 if (err) {
                                     console.info(err);
-                                    return next(err)
+                                    next(err)
                                 }
                             })
                         }
@@ -238,14 +243,14 @@ userRouter.post('/avatar/:userId', async (req, res, next) => {
 })
 
 //获取用户信息
-userRouter.get('/userInfo', async(req, res, next) => {
+userRouter.get('/userInfo', async (req, res, next) => {
     const userId = req.query.id;
     const connect = await db.connect();
     const queryById = `select * from user where id="${userId}"`
     connect.query(queryById, (err, result) => {
         if (err) {
             console.log(err);
-            return next(err)
+            next(err)
         } else {
             if (result.length > 0) {
                 let user = result[0];
@@ -263,6 +268,7 @@ userRouter.get('/userInfo', async(req, res, next) => {
                 })
             }
         }
+        connect.end()
     })
 })
 module.exports = userRouter

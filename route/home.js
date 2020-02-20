@@ -74,7 +74,7 @@ homeRouter.get('/homeData', async (req, res, next) => {
     connect.query('select * from book where cover!=\'\'',
         (err, results) => {
             if (err) {
-                return next(err)
+                next(err)
             } else {
                 const length = results.length;
                 const banner = [
