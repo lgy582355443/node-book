@@ -29,12 +29,17 @@ app.use(bodyParser.urlencoded({
 const passer = ['/api/home/homeData', '/api/detail/bookDetail', '/api/list/categoryList', '/api/list/allBookList', '/api/user/register', '/api/user/login'];
 
 function auth(req, res, next) {
-    let authorization = req.get('Authorization');
-    authorization = authorization.replace('Bearer ', '');
+    const authorization = req.get('Authorization');
+    let token = ''
+    if (authorization) {
+        token = authorization.replace('Bearer ','')
+    } else {
+        token = authorization
+    }
     if (passer.includes(req.path)) {
         next()
     } else {
-        jwt.verify(authorization, secretOrPrivateKey, function (err, decode) {
+        jwt.verify(token, secretOrPrivateKey, function (err, decode) {
             if (err) { //  认证出错
                 res.json({
                     code: -1,
