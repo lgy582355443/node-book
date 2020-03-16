@@ -12,7 +12,7 @@ if (env == 'dev') {
 } else if (env == 'prod') {
     dbHost = '112.74.164.251'
     dbUser = 'root'
-    dbPwd = 'abc123456'
+    dbPwd = '你的数据库密码'
     dbName = 'book'
 }
 
