@@ -14,6 +14,7 @@ const secretOrPrivateKey = require('./utils').secretOrPrivateKey;
 
 const app = express();
 
+// 支持跨域
 app.use(cors());
 
 // app.use(express.static('./public'));
@@ -47,6 +48,7 @@ function auth(req, res, next) {
                 });
             } else {
                 next();
+                console.log(decode);
             }
         })
     }
@@ -61,7 +63,7 @@ app.use('/api/user', userRouter);
 // app.use(voiceRouter);
 
 
-function not_find_handler_middleware(err, req, res, next) {
+function not_find_handler_middleware( req, res, next) {
     res.status(404)
         .json({
             message: `api不存在`

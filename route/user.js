@@ -98,148 +98,106 @@ userRouter.post('/register', async (req, res, next) => {
     })
 })
 
-//更改用户信息
-userRouter.post('/updata', async (req, res, next) => {
-    const user = req.body;
+//修改用户资料
+userRouter.post("/updata", async (req, res, next) => {
+    // const userId = req.params.userId;
     const connect = await db.connect();
-    const queryById = `select * from user where id="${user.id}"`
-    const updata = `update user set ? where id="${user.id}"`
-    connect.query(queryById, (err, result) => {
-        if (err) {
-            console.log(err);
-            next(err)
-        } else {
-            if (result.length > 0) {
-                let newData = result[0]
-                Object.assign(newData, user)
-                connect.query(updata, newData, (err, result) => {
+    const form = new formidable.IncomingForm();
+    form.uploadDir = path.join(__dirname, '../upload'); //文件保存目录
+    form.maxFieldsSize = 1 * 1024 * 1024; //用户头像大小限制为最大1M
+    form.keepExtensions = true; //使用文件的原扩展名 
+    // file是上传文件 fields是其他的数据
+    form.parse(req, (err, fields, file) => {
+        const files = file.file;
+        let user = JSON.parse(fields.user);
+        const updataSql = `update user set ? where id="${user.id}"`;
+        const queryById = `select * from user where id="${user.id}"`;
+
+        if (files) {
+            let filePath = '';
+            //上传文件的路径
+            filePath = files.path;
+            //获取文件后缀名
+            const fileExt = filePath.substring(filePath.lastIndexOf('.'));
+            //判断文件类型是否允许上传  
+            if (('.jpg.jpeg.png.gif').indexOf(fileExt.toLowerCase()) === -1) {
+                const err = new Error('此文件类型不允许上传');
+                res.json({
+                    code: -1,
+                    message: '此文件类型不允许上传'
+                });
+                next(err);
+            } else {
+                //以当前时间戳对上传文件进行重命名  
+                const fileName = user.id + '_' + new Date().getTime() + fileExt;
+                user.avatar = fileName;
+                //文件移动的目录文件夹，不存在时创建目标文件夹  
+                let targetDir = avatarFilePath;
+                if (!fs.existsSync(targetDir)) {
+                    fs.mkdirSync(targetDir);
+                }
+                const targetFile = path.join(targetDir, fileName);
+                connect.query(queryById, (err, result) => {
                     if (err) {
                         console.log(err);
                         next(err)
                     } else {
-                        delete newData.password
-                        newData.avatar = resUrl + '/user/avatar/' + user.avatar;
-                        res.json({
-                            code: 0,
-                            data: newData,
-                            msg: '更改成功'
-                        })
-                    }
-                })
-            } else {
-                res.json({
-                    code: 1,
-                    msg: '没有找到用户'
-                })
-            }
-        }
-        connect.end();
-    })
-})
-
-
-//更换头像
-userRouter.post('/avatar/:userId', async (req, res, next) => {
-    const userId = req.params.userId;
-    const connect = await db.connect();
-    //上传文件只能通过这个插件接收  file是上传文件 fields是其他的
-    const form = new formidable.IncomingForm();
-    form.uploadDir = path.join(__dirname, '../upload'); //文件保存的临时目录为static文件夹（文件夹不存在会报错，一会接受的file中的path就是这个）
-    form.maxFieldsSize = 1 * 1024 * 1024; //用户头像大小限制为最大1M
-    form.keepExtensions = true; //使用文件的原扩展名  
-    form.parse(req, (err, fields, file) => {
-        let filePath = '';
-        //如果提交文件的form中将上传文件的input名设置为tmpFile，就从tmpFile中取上传文件。否则取for in循环第一个上传的文件。  
-        if (file.tmpFile) {
-            filePath = file.tmpFile.path;
-        } else {
-            for (let key in file) {
-                if (file[key].path && filePath === '') {
-                    filePath = file[key].path;
-                    break;
-                }
-            }
-        }
-        //文件移动的目录文件夹，不存在时创建目标文件夹  
-        let targetDir = avatarFilePath;
-        // let targetDir = path.join(__dirname, '../public');
-        if (!fs.existsSync(targetDir)) {
-            fs.mkdirSync(targetDir);
-        }
-        //获取文件后缀名
-        const fileExt = filePath.substring(filePath.lastIndexOf('.'));
-        //判断文件类型是否允许上传  
-        if (('.jpg.jpeg.png.gif').indexOf(fileExt.toLowerCase()) === -1) {
-            const err = new Error('此文件类型不允许上传');
-            res.json({
-                code: -1,
-                message: '此文件类型不允许上传'
-            });
-            next(err)
-        } else {
-            //以当前时间戳对上传文件进行重命名  
-            const fileName = userId + '_' + new Date().getTime() + fileExt;
-            const targetFile = path.join(targetDir, fileName);
-
-            const queryById = `select * from user where id="${userId}"`
-            const updata = `update user set avatar="${fileName}" where id="${userId}"`
-
-            connect.query(queryById, (err, result) => {
-                if (err) {
-                    console.log(err);
-                    next(err)
-                } else {
-                    if (result.length > 0) {
-                        //旧头像文件名
-                        const oldAvatar = result[0].avatar;
-
-                        //移动文件 (旧文件名，新文件名，回调函数) 
-                        fs.renameSync(filePath, targetFile, (err) => {
-                            if (err) {
-                                console.info(err);
-                                res.json({
-                                    code: 1,
-                                    msg: '操作失败'
-                                });
-                            }
-                        });
-
-                        //上传成功，返回文件的相对路径  
-                        let fileUrl = resUrl + '/user/avatar/' + fileName;
-                        connect.query(updata, (err, result) => {
-                            if (err) {
-                                console.log(err);
-                                next(err)
-                            } else {
-                                res.json({
-                                    fileUrl,
-                                    code: 0,
-                                    msg: '更换成功'
-                                });
-                            }
-                        })
-
-                        //删除旧的头像文件
-                        if (oldAvatar && oldAvatar !== 'avatar.png') {
-                            fs.unlink(targetDir + '/' + oldAvatar, (err) => {
+                        if (result.length > 0) {
+                            //旧头像文件名
+                            const oldAvatar = result[0].avatar;
+                            //移动文件 (旧文件名，新文件名，回调函数) 
+                            fs.renameSync(filePath, targetFile, (err) => {
                                 if (err) {
-                                    console.info(err);
+                                    console.log(err);
                                     next(err)
                                 }
+                                //删除旧的头像文件
+                                if (oldAvatar && oldAvatar !== 'avatar.png') {
+                                    fs.unlink(targetDir + '/' + oldAvatar, (err) => {
+                                        if (err) {
+                                            console.log(err);
+                                            next(err)
+                                        }
+                                    })
+                                }
+                            });
+                        }
+                    }
+                })
+            }
+        }
+        connect.query(queryById, (err, result) => {
+            if (err) {
+                console.log(err);
+                next(err)
+            } else {
+                if (result.length > 0) {
+                    let newData = result[0]
+                    Object.assign(newData, user)
+                    connect.query(updataSql, newData, (err, result) => {
+                        if (err) {
+                            console.log(err);
+                            next(err)
+                        } else {
+                            delete newData.password
+                            newData.avatar = resUrl + '/user/avatar/' + user.avatar;
+                            res.json({
+                                code: 0,
+                                data: newData,
+                                msg: '更改成功'
                             })
                         }
-
-                    } else {
-                        res.json({
-                            code: 1,
-                            msg: '获取失败'
-                        })
-                    }
+                    })
+                } else {
+                    res.json({
+                        code: 1,
+                        msg: '没有找到用户'
+                    })
                 }
-                connect.end()
-            })
-        }
-    });
+            }
+            connect.end();
+        })
+    })
 })
 
 //获取用户信息
