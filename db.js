@@ -7,13 +7,13 @@ let dbName
 if (env == 'dev') {
     dbHost = 'localhost'
     dbUser = 'root'
-    dbPwd = 'abc123456'
-    dbName = 'text'
+    dbPwd = '你的密码'
+    dbName = '数据库名'
 } else if (env == 'prod') {
     dbHost = '112.74.164.251'
     dbUser = 'root'
-    dbPwd = 'abc123456'
-    dbName = 'book'
+    dbPwd = '你的密码'
+    dbName = '数据库名'
 }
 
 //连接数据库
