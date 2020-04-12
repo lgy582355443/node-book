@@ -11,8 +11,8 @@ if (env == 'dev') {
     dbName = 'text'
 } else if (env == 'prod') {
     dbHost = '112.74.164.251'
-    dbUser = '你的用户名'
-    dbPwd = '你的密码'
+    dbUser = 'root'
+    dbPwd = 'abc123456'
     dbName = 'book'
 }
 
