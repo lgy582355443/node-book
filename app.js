@@ -1,9 +1,13 @@
 const express = require('express')
 const cors = require('cors')
 const jwt = require('jsonwebtoken')
+const fs = require('fs')
+const morgan = require('morgan')
+const path = require('path')
 const bodyParser = require('body-parser')
 const userRouter = require('./route/user')
 const homeRouter = require('./route/home')
+const classifyRouter = require('./route/classify')
 const listRouter = require('./route/list')
 const detailRouter = require('./route/detail')
 const shelfRouter = require('./route/shelf')
@@ -26,8 +30,11 @@ app.use(bodyParser.urlencoded({
     extended: true
 }));
 
+var accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'), { flags: 'a' })
+app.use(morgan('combined', { stream: accessLogStream }))
+
 //验证Token
-const passer = ['/api/home/homeData', '/api/detail/bookDetail', '/api/list/categoryList','/api/list/search', '/api/list/allBookList', '/api/user/register', '/api/user/login'];
+const passer = ['/api/home/homeData', '/api/detail/bookDetail', '/api/list/categoryList','/api/list/search', '/api/list/allBookList', '/api/user/register', '/api/user/login','/api/classify/list'];
 
 function auth(req, res, next) {
     const authorization = req.get('Authorization');
@@ -56,6 +63,7 @@ function auth(req, res, next) {
 app.use(auth);
 
 app.use('/api/home', homeRouter);
+app.use('/api/classify', classifyRouter);
 app.use('/api/detail', detailRouter);
 app.use('/api/shelf', shelfRouter);
 app.use('/api/list', listRouter);
