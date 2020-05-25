@@ -7,12 +7,12 @@ let dbName
 if (env == 'dev') {
     dbHost = 'localhost'
     dbUser = 'root'
-    dbPwd = 'abc123456'
+    dbPwd = '密码'
     dbName = 'text'
 } else if (env == 'prod') {
     dbHost = '112.74.164.251'
     dbUser = 'root'
-    dbPwd = 'abc123456'
+    dbPwd = '密码'
     dbName = 'book'
 }
 
